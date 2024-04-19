@@ -10,10 +10,13 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.components.Description
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
@@ -23,6 +26,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
+
 
 class DataActivity : AppCompatActivity() {
 //    private lateinit var goBack: ImageView
@@ -37,6 +41,8 @@ class DataActivity : AppCompatActivity() {
     private val channelId = "i.apps.notifications"
     private val description = "Test notification"
     private lateinit var barchart : BarChart
+    private lateinit var peopleProgressBar : ProgressBar
+    private lateinit var minutesProgressBar : ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +52,8 @@ class DataActivity : AppCompatActivity() {
         people = findViewById(R.id.people)
         minutes = findViewById(R.id.minutes)
         barchart = findViewById(R.id.barchart)
+        peopleProgressBar = findViewById(R.id.peopleProgressBar)
+        minutesProgressBar = findViewById(R.id.minutesProgressBar)
 //        circles = findViewById(R.id.imageView3)
 //        goBack.setOnClickListener {
 //            onBackPressed()
@@ -67,8 +75,13 @@ class DataActivity : AppCompatActivity() {
                 val value = snapshot.getValue<HashMap<String, String>>().toString()
                 Log.d("hi", "Value is: " + value)
                 people.text = value.replaceFirst("{Name=", "").replaceFirst("}", "") + " \npeople"
-                minutes.text = (value.replaceFirst("{Name=", "").replaceFirst("}", "")
-                    .toInt() * 2).toString() + " \nminutes"
+                minutes.text = (value.replaceFirst("{Name=", "").replaceFirst("}", "").toInt() * 2).toString() + " \nmins"
+
+                peopleProgressBar.progress = value.replaceFirst("{Name=", "").replaceFirst("}", "").toInt()
+                Log.v("hi", peopleProgressBar.progress.toString())
+                minutesProgressBar.progress = value.replaceFirst("{Name=", "").replaceFirst("}", "").toInt()*3
+                Log.v("hi", minutesProgressBar.progress.toString())
+
                 var pendingIntent: PendingIntent? = null
                 pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     PendingIntent.getActivity(
@@ -142,6 +155,8 @@ class DataActivity : AppCompatActivity() {
 
         })
 
+
+
     }
 
     private fun createBarChart() {
@@ -149,18 +164,24 @@ class DataActivity : AppCompatActivity() {
 
         val entries = ArrayList<BarEntry>()
         entries.add(BarEntry(0f,10f))
-        entries.add(BarEntry(1f,30f))
-        entries.add(BarEntry(2f,60f))
-        entries.add(BarEntry(3f,100f))
-        entries.add(BarEntry(5f,70f))
-        entries.add(BarEntry(10f,80f))
+        entries.add(BarEntry(1f,15f))
+        entries.add(BarEntry(2f,8f))
+        entries.add(BarEntry(3f,11f))
+        entries.add(BarEntry(4f,30f))
+        entries.add(BarEntry(5f,45f))
+        entries.add(BarEntry(6f,25f))
+        entries.add(BarEntry(7f,27f))
+        entries.add(BarEntry(8f,35f))
+        entries.add(BarEntry(9f,20f))
+        entries.add(BarEntry(10f,16f))
 
-        val barDataSet = BarDataSet(entries,"BarDataSet")
+        val barDataSet = BarDataSet(entries,"Time")
 
         val dataSet = BarData(barDataSet)
 
         dataSet.barWidth = 0.9f
 
+        barchart.description.text = "People"
         barchart.data = dataSet
         barchart.setFitBars(true)
         barchart.invalidate()

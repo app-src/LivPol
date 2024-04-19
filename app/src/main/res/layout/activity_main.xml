@@ -11,30 +11,30 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="70dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:layout="@layout/activity_main" />
+    <!--tools:layout="@layout/activity_main"-->
 
-    <RelativeLayout
+
+    <TextView
+        android:id="@+id/designBar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="bottom">
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/designBar"
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:background="@drawable/background_bottom_bar"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Search by details or EPIC"
-                android:textColor="@color/black"
-                android:textStyle="bold" />
-        </androidx.cardview.widget.CardView>
-    </RelativeLayout>
+        android:layout_height="60dp"
+        android:layout_marginHorizontal="24dp"
+        android:background="@drawable/rounded_corners"
+        android:fontFamily="@font/libre_franklin_medium"
+        android:gravity="center"
+        android:text="@string/search_by_epic_number"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/map"
+        tools:ignore="MissingConstraints" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

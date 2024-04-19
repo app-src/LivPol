@@ -6,6 +6,7 @@ import android.graphics.DrawFilter
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -20,7 +21,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
-    private lateinit var cardView: CardView
+    private lateinit var cardView: TextView
     private var allPoints: ArrayList<LatLng> = arrayListOf()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
