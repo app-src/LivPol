@@ -7,30 +7,33 @@
     tools:context=".MainActivity">
 
     <androidx.fragment.app.FragmentContainerView
-        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout="@layout/activity_main"
-        android:layout_marginBottom="70dp"/>
+        android:layout_marginBottom="70dp"
+        tools:layout="@layout/activity_main" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="bottom">
+
         <androidx.cardview.widget.CardView
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             android:id="@+id/designBar"
-            android:background="@drawable/background_bottom_bar"
             android:layout_width="match_parent"
-            android:layout_height="70dp">
+            android:layout_height="70dp"
+            android:background="@drawable/background_bottom_bar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
             <TextView
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:layout_gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Search by details or EPIC"/>
+                android:layout_gravity="center"
+                android:text="Search by details or EPIC"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
         </androidx.cardview.widget.CardView>
     </RelativeLayout>
 

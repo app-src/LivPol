@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace 'io.github.ashishthehulk.livpol'
-    compileSdk 32
+    compileSdk 34
 
     defaultConfig {
         applicationId "io.github.ashishthehulk.livpol"
         minSdk 21
-        targetSdk 32
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -45,10 +45,13 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
     implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
-    implementation 'com.google.firebase:firebase-database-ktx:20.1.0'
+    implementation 'com.google.firebase:firebase-database-ktx:20.3.1'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
-    implementation 'com.google.android.gms:play-services-maps:18.1.0'
+    implementation 'com.google.android.gms:play-services-maps:18.2.0'
+
+    //bar chart
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
 }
