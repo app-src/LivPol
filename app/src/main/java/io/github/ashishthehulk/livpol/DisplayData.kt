@@ -1,8 +1,12 @@
 package io.github.ashishthehulk.livpol
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,13 +20,14 @@ import java.net.URL
 
 class DisplayData : AppCompatActivity() {
 
+    var label = "";
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.display_epic_data)
 
+
         val extras = intent.extras
-        val latitude = ""
-        val longitude = ""
         if (extras != null) {
             val epicno = extras.getString("epicno")
             val captchaData = extras.getString("captchaData")
@@ -62,6 +67,8 @@ class DisplayData : AppCompatActivity() {
                             content.getString("createdDttm")
                         findViewById<TextView>(R.id.psbuildingName).text =
                             content.getString("psbuildingName")
+                        label = content.getString("psbuildingName") + ", " + content.getString("buildingAddress")
+                        Log.e("getVoterInfo", label)
                     }
                     } catch (e : Exception) {
                         Log.e("getVoterInfo", "An severe error occurred: ${e.message}")
@@ -74,8 +81,6 @@ class DisplayData : AppCompatActivity() {
         }
 
 
-
-
     }
 
 //    private fun getVoterInfo(epicno: String?, captchaData: String?): Any {
@@ -84,6 +89,20 @@ class DisplayData : AppCompatActivity() {
 //
 //    }
 
+    fun openMap(view: View) {
+        val latitude = 12.13
+        val longitude = 2.356
+//        val label = "Kedarnath Hindi Primary School, Sahajramjote, Upper Bagdogra" // You can customize this label if needed
+        val uri = String.format("geo:%s,%s?q=%s",latitude, longitude, label)
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+        Log.d("TAG",uri)
+        intent.setPackage("com.google.android.apps.maps")
+        if (intent.resolveActivity(packageManager) != null) {
+            startActivity(intent)
+        } else {
+            Toast.makeText(this, "Google Maps app is not installed", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     private suspend fun getVoterInfo(
         epicno: String?,
