@@ -2,6 +2,7 @@ package io.github.ashishthehulk.livpol
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,6 +34,36 @@ class DisplayData : AppCompatActivity() {
                 if (data != null) {
                     // Print the received data in Logcat
                     Log.d("SecondActivity", "Received data: ${data.toString()} ")
+                    // Parse the JSON response
+//                    val jsonResponse = JSONObject(data)
+                    val content = data.getJSONObject("content")
+
+// Set values to TextViews
+                    try {
+
+                    withContext(Dispatchers.Main) {
+                        findViewById<TextView>(R.id.epicNumber).text =
+                            content.getString("epicNumber")
+                        findViewById<TextView>(R.id.firstName).text =
+                            content.getString("applicantFirstName")
+                        findViewById<TextView>(R.id.relationName).text =
+                            content.getString("relationName")
+                        findViewById<TextView>(R.id.age).text = content.getInt("age").toString()
+                        findViewById<TextView>(R.id.gender).text = content.getString("gender")
+                        findViewById<TextView>(R.id.birthYear).text =
+                            content.optString("birthYear", "")
+                        findViewById<TextView>(R.id.partNumber).text =
+                            content.getInt("partNumber").toString()
+                        findViewById<TextView>(R.id.partName).text = content.getString("partName")
+                        findViewById<TextView>(R.id.stateName).text = content.getString("stateName")
+                        findViewById<TextView>(R.id.createdDttm).text =
+                            content.getString("createdDttm")
+                        findViewById<TextView>(R.id.psbuildingName).text =
+                            content.getString("psbuildingName")
+                    }
+                    } catch (e : Exception) {
+                        Log.e("getVoterInfo", "An severe error occurred: ${e.message}")
+                    }
                 } else {
                     Log.e("SecondActivity", "Failed to get voter info")
                 }
