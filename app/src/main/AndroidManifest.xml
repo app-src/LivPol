@@ -23,6 +23,15 @@
                 android:value="" />
         </activity>
 
+        <activity android:name=".FetchEpicData">
+
+        </activity>
+
+        <activity
+            android:name=".DisplayData">
+        </activity>
+
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAk3bSwq8oqySplnsInPFyKyzfO0aI9HqA" />

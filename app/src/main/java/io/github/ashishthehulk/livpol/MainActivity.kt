@@ -31,7 +31,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         mapFragment!!.getMapAsync(this)
         cardView = findViewById(R.id.designBar)
         cardView.setOnClickListener {
-            val intent = Intent(this, DataActivity::class.java)
+//            val intent = Intent(this, DataActivity::class.java)
+            val intent = Intent(this, FetchEpicData::class.java)
+
             startActivity(intent)
         }
     }
