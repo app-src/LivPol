@@ -21,6 +21,8 @@ class DisplayData : AppCompatActivity() {
         setContentView(R.layout.display_epic_data)
 
         val extras = intent.extras
+        val latitude = ""
+        val longitude = ""
         if (extras != null) {
             val epicno = extras.getString("epicno")
             val captchaData = extras.getString("captchaData")
@@ -70,6 +72,8 @@ class DisplayData : AppCompatActivity() {
 
             }
         }
+
+
 
 
     }
