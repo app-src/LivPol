@@ -1,18 +1,25 @@
 package io.github.ashishthehulk.livpol
 
+import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.os.SystemClock
 import android.util.Log
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.components.XAxis
@@ -37,13 +44,15 @@ class DataActivity : AppCompatActivity() {
 //    private lateinit var circles: ImageView
     private lateinit var context: Context
     private var notified = false
-    lateinit var builder: Notification.Builder
-    private val channelId = "i.apps.notifications"
-    private val description = "Test notification"
+
     private lateinit var barchart : BarChart
     private lateinit var peopleProgressBar : ProgressBar
     private lateinit var minutesProgressBar : ProgressBar
 
+    var lastNotificationTime: Long = 0
+
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_data)
@@ -60,7 +69,8 @@ class DataActivity : AppCompatActivity() {
 //        }
 
         createBarChart()
-        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        createNotificationChannel()
+        sendNotification()
 
 
         // Write a message to the database
@@ -68,6 +78,7 @@ class DataActivity : AppCompatActivity() {
         val myRef = database.getReference("people")
 
         myRef.addValueEventListener(object : ValueEventListener {
+            @RequiresApi(Build.VERSION_CODES.TIRAMISU)
             override fun onDataChange(snapshot: DataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
@@ -82,24 +93,8 @@ class DataActivity : AppCompatActivity() {
                 minutesProgressBar.progress = value.replaceFirst("{Name=", "").replaceFirst("}", "").toInt()*3
                 Log.v("hi", minutesProgressBar.progress.toString())
 
-                var pendingIntent: PendingIntent? = null
-                pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    PendingIntent.getActivity(
-                        context,
-                        0,
-                        intent,
-                        PendingIntent.FLAG_MUTABLE
-                    )
-                } else {
-                    PendingIntent.getActivity(
-                        context,
-                        0,
-                        intent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                    )
-                }
 
-//                val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
                 var v = value.replaceFirst("{Name=", "").replaceFirst("}", "").toInt()
 //                runOnUiThread(Runnable{
 //                    if(v<4){
@@ -107,46 +102,20 @@ class DataActivity : AppCompatActivity() {
 //                    }else circles.setImageDrawable(getDrawable(R.drawable.data_design))
 //                })
 
-                // RemoteViews are used to use the content of
-                // some different layout apart from the current activity layout
-//                val contentView = RemoteViews(packageName, R.layout.activity_after_notification)
+                // Check condition and send notification only if 10 seconds have passed since last notification
+                if (v in 1..3) {
+                    // Calculate the time difference in milliseconds since the last notification
+                    val currentTime = SystemClock.elapsedRealtime()
+                    val timeDifference = currentTime - lastNotificationTime
 
-                if (!notified) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        notificationChannel = NotificationChannel(
-                            channelId,
-                            description,
-                            NotificationManager.IMPORTANCE_HIGH
-                        )
-                        notificationChannel.enableLights(true)
-                        notificationChannel.lightColor = Color.GREEN
-                        notificationChannel.enableVibration(false)
-                        notificationManager.createNotificationChannel(notificationChannel)
-
-                        builder = Notification.Builder(context, channelId)
-                            .setSmallIcon(R.drawable.ic_launcher_background)
-                            .setLargeIcon(
-                                BitmapFactory.decodeResource(
-                                    context.resources,
-                                    R.drawable.ic_launcher_background
-                                )
-                            )
-                            .setContentIntent(pendingIntent)
-                    } else {
-
-                        builder = Notification.Builder(context)
-                            .setSmallIcon(R.drawable.ic_launcher_background)
-                            .setLargeIcon(
-                                BitmapFactory.decodeResource(
-                                    context.resources,
-                                    R.drawable.ic_launcher_background
-                                )
-                            )
-                            .setContentIntent(pendingIntent)
+                    // Check if 10 seconds (10000 milliseconds) have passed since the last notification
+                    if (timeDifference >= 10000) {
+                        // Trigger notification
+                        sendNotification()
                     }
-                    notificationManager.notify(1234, builder.build())
-                    notified = true
                 }
+
+
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -157,6 +126,55 @@ class DataActivity : AppCompatActivity() {
 
 
 
+    }
+
+    //notifications
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun sendNotification() {
+        createNotificationChannel()
+
+        val notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.notif)  // Set notification icon (ensure notificationIcon is not null)
+            .setContentTitle("Voting Reminder")  // Set notification title
+//            .setContentText("Don't forget to visit your polling station today!")  // Set notification text
+            .setContentText("Less crowd detected at your polling station!!")  // Set notification text
+            .setStyle(NotificationCompat.BigTextStyle().bigText("Remember, your vote is your voice. Make it heard!"))  // Optional: Expandable notification text
+            .setPriority(NotificationCompat.PRIORITY_HIGH)  // Set notification priority
+
+        val notificationManager = NotificationManagerCompat.from(this)
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // Request POST_NOTIFICATIONS permission
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                /* Replace with a unique request code */ 101  // Example request code
+            )
+            return
+        }
+        notificationManager.notify(1, notificationBuilder.build())  // Send notification with an ID of 1
+        lastNotificationTime = SystemClock.elapsedRealtime()
+
+    }
+
+
+
+    private val CHANNEL_ID = "voting_reminder"
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "Voting Reminder Channel"
+            val descriptionText = "Testing"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+            }
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
     }
 
     private fun createBarChart() {
